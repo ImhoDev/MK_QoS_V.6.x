@@ -1,0 +1,82 @@
+/ip firewall mangle
+add action=mark-connection chain=prerouting comment=P2P disabled=no new-connection-mark="PRIO 8" p2p=all-p2p passthrough=yes
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 8" disabled=no new-packet-mark="PRIO 8" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 8"
+add action=mark-connection chain=prerouting comment="PRIO - 7 MULTIDESCARGAS" connection-bytes=50000000-0 disabled=no new-connection-mark="PRIO 7" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 7" disabled=no new-packet-mark="PRIO 7" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 7"
+add action=mark-connection chain=prerouting comment="MARCO PRIO 1" disabled=no new-connection-mark="PRIO 1" passthrough=yes protocol=icmp
+
+add action=mark-connection chain=output comment="" disabled=no dst-port=53 new-connection-mark="PRIO 1" passthrough=yes protocol=udp
+
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=53 new-connection-mark="PRIO 1" passthrough=yes protocol=udp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 1" disabled=no new-packet-mark="PRIO 1" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 1"
+add action=mark-connection chain=prerouting comment="MARCO PRIO 2 , STREAMING - JUEGOS,VOIP" disabled=no dst-port=5060-5061 new-connection-mark="PRIO 2" passthrough=yes protocol=udp
+
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=1863,5190,777 new-connection-mark="PRIO 2" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 2" disabled=no new-packet-mark="PRIO 2" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 2"
+add action=mark-connection chain=prerouting comment="marco prio 3 navegacion" disabled=no dst-port=80,443,8000-9000 new-connection-mark="PRIO 3" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 3" disabled=no new-packet-mark="PRIO 3" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 3"
+add action=mark-connection chain=prerouting comment="PRIO 4 - PUERTOS LABORALES" disabled=no dst-port=25,110,143,3389,1723,21-23 new-connection-mark="PRIO 4" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 4" disabled=no new-packet-mark="PRIO 4" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 4"
+add action=mark-connection chain=prerouting comment="MARCO PRIO 5" disabled=no new-connection-mark="PRIO 5" passthrough=yes
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 5" disabled=no new-packet-mark="PRIO 5" passthrough=yes
+
+add action=accept chain="TERMINO DE PROCESAR" comment="" disabled=no
+
+
+/queue type
+add kind=sfq name=BAJADA sfq-allot=1514 sfq-perturb=5
+add kind=sfq name=SUBIDA sfq-allot=1514 sfq-perturb=5  
+
+
+
+/queue tree
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=Download parent=ether5 priority=1
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO1 packet-mark="PRIO 1" parent=Download priority=1 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO2 packet-mark="PRIO 2" parent=Download priority=2 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO3 packet-mark="PRIO 3" parent=Download priority=3 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO4 packet-mark="PRIO 4" parent=Download priority=4 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO5 packet-mark="PRIO 5" parent=Download priority=5 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO7 packet-mark="PRIO 7" parent=Download priority=7 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO8 packet-mark="PRIO 8" parent=Download priority=8 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=Upload parent=pppoe-out1 priority=1
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.1 packet-mark="PRIO 1" parent=Upload priority=1 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.2 packet-mark="PRIO 2" parent=Upload priority=2 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.3 packet-mark="PRIO 3" parent=Upload priority=3 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.4 packet-mark="PRIO 4" parent=Upload priority=4 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.5 packet-mark="PRIO 5" parent=Upload priority=5 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.7 packet-mark="PRIO 7" parent=Upload priority=7 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.8 packet-mark="PRIO 8" parent=Upload priority=8 queue=SUBIDA
