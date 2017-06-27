@@ -1,0 +1,37 @@
+*******OJO*******
+
+Recuerde que la ether5 es la Interface LAN y pppoe-out1 seria la WAN 
+y eso lo tienen que modificar por las interfaces de ustedes 
+
+/queue tree
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=Download parent=ether5 priority=1
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO1 packet-mark="PRIO 1" parent=Download priority=1 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO2 packet-mark="PRIO 2" parent=Download priority=2 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO3 packet-mark="PRIO 3" parent=Download priority=3 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO4 packet-mark="PRIO 4" parent=Download priority=4 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO5 packet-mark="PRIO 5" parent=Download priority=5 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO7 packet-mark="PRIO 7" parent=Download priority=7 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO8 packet-mark="PRIO 8" parent=Download priority=8 queue=BAJADA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=Upload parent=pppoe-out1 priority=1
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.1 packet-mark="PRIO 1" parent=Upload priority=1 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.2 packet-mark="PRIO 2" parent=Upload priority=2 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.3 packet-mark="PRIO 3" parent=Upload priority=3 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.4 packet-mark="PRIO 4" parent=Upload priority=4 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.5 packet-mark="PRIO 5" parent=Upload priority=5 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.7 packet-mark="PRIO 7" parent=Upload priority=7 queue=SUBIDA
+
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 max-limit=0 name=PRIO.8 packet-mark="PRIO 8" parent=Upload priority=8 queue=SUBIDA

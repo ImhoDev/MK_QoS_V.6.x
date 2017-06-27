@@ -1,0 +1,5 @@
+Pegar en queue type sin modificar nada solo copia y pega en la terminal
+
+/queue type
+add kind=sfq name=BAJADA sfq-allot=1514 sfq-perturb=5
+add kind=sfq name=SUBIDA sfq-allot=1514 sfq-perturb=5

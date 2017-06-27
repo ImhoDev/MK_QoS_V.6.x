@@ -1,0 +1,44 @@
+
+/ip firewall mangle
+add action=mark-connection chain=prerouting comment=P2P disabled=no new-connection-mark="PRIO 8" p2p=all-p2p passthrough=yes
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 8" disabled=no new-packet-mark="PRIO 8" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 8"
+add action=mark-connection chain=prerouting comment="PRIO - 7 MULTIDESCARGAS" connection-bytes=50000000-0 disabled=no new-connection-mark="PRIO 7" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 7" disabled=no new-packet-mark="PRIO 7" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 7"
+add action=mark-connection chain=prerouting comment="MARCO PRIO 1" disabled=no new-connection-mark="PRIO 1" passthrough=yes protocol=icmp
+
+add action=mark-connection chain=output comment="" disabled=no dst-port=53 new-connection-mark="PRIO 1" passthrough=yes protocol=udp
+
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=53 new-connection-mark="PRIO 1" passthrough=yes protocol=udp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 1" disabled=no new-packet-mark="PRIO 1" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 1"
+add action=mark-connection chain=prerouting comment="MARCO PRIO 2 , STREAMING - JUEGOS,VOIP" disabled=no dst-port=5060-5061 new-connection-mark="PRIO 2" passthrough=yes protocol=udp
+
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=1863,5190,777 new-connection-mark="PRIO 2" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 2" disabled=no new-packet-mark="PRIO 2" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 2"
+add action=mark-connection chain=prerouting comment="marco prio 3 navegacion" disabled=no dst-port=80,443,8000-9000 new-connection-mark="PRIO 3" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 3" disabled=no new-packet-mark="PRIO 3" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 3"
+add action=mark-connection chain=prerouting comment="PRIO 4 - PUERTOS LABORALES" disabled=no dst-port=25,110,143,3389,1723,21-23 new-connection-mark="PRIO 4" passthrough=yes protocol=tcp
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 4" disabled=no new-packet-mark="PRIO 4" passthrough=yes
+
+add action=jump chain=prerouting comment="" disabled=no jump-target="TERMINO DE PROCESAR" packet-mark="PRIO 4"
+add action=mark-connection chain=prerouting comment="MARCO PRIO 5" disabled=no new-connection-mark="PRIO 5" passthrough=yes
+
+add action=mark-packet chain=prerouting comment="" connection-mark="PRIO 5" disabled=no new-packet-mark="PRIO 5" passthrough=yes
+
+add action=accept chain="TERMINO DE PROCESAR" comment="" disabled=no
+
