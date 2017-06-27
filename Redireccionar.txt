@@ -1,0 +1,11 @@
+Reglas para redireccionar trafico a Servidor handy Cache
+
+
+http://www.ryohnosuke.com/foros/index.php?threads/246/
+
+/ip firewall nat
+add chain=srcnat comment="" src-address=192.168.10.0/24 action=masquerade
+
+
+/ip firewall nat
+add chain=dstnat comment="Redireccion a Thunder" protocol=tcp dst-port=80 in-interface=LAN src-address=!192.168.10.200 action=dst-nat disabled=no to-addresses=192.168.10.200 to-ports=3128

@@ -1,0 +1,8 @@
+Reglas para redireccionar trafico a Servidor handy Cache
+
+/ip firewall nat
+add chain=srcnat comment="Enmascarando Para HC" src-address=192.168.1.0/24 action=masquerade
+
+
+/ip firewall nat
+add chain=dstnat comment="Redireccionando a HandyCache" protocol=tcp dst-port=80 in-interface=LAN src-address=!192.168.1.124 action=dst-nat disabled=no to-addresses=192.168.1.124 to-ports=1010
