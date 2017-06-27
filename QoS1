@@ -1,0 +1,48 @@
+/ip firewall mangle
+add action=mark-connection chain=forward comment="PRIO-8  P2P" new-connection-mark="PRIO 8" p2p=all-p2p
+add action=mark-packet chain=forward connection-mark="PRIO 8" new-packet-mark="PRIO 8_up" passthrough=no src-address-list=Clientes
+add action=mark-packet chain=forward connection-mark="PRIO 8" dst-address-list=Clientes new-packet-mark="PRIO 8_down" passthrough=no
+add action=mark-connection chain=forward comment="PRIO - 7 MULTIDESCARGAS" connection-bytes=50000000-0 new-connection-mark="PRIO 7" \
+    protocol=tcp
+add action=mark-packet chain=forward connection-mark="PRIO 7" new-packet-mark="PRIO 7_up" passthrough=no src-address-list=Clientes
+add action=mark-packet chain=forward connection-mark="PRIO 7" dst-address-list=Clientes new-packet-mark="PRIO 7_down" passthrough=no
+add action=mark-connection chain=forward comment="MARCO PRIO 1" new-connection-mark="PRIO 1" protocol=icmp
+add action=mark-connection chain=forward dst-address=192.95.62.41 new-connection-mark="PRIO 1"
+add action=mark-connection chain=forward dst-port=53 new-connection-mark="PRIO 1" protocol=udp
+add action=mark-packet chain=forward connection-mark="PRIO 1" new-packet-mark="PRIO 1_up" passthrough=no src-address-list=Clientes
+add action=mark-packet chain=forward connection-mark="PRIO 1" dst-address-list=Clientes new-packet-mark="PRIO 1_down" passthrough=no
+add action=mark-connection chain=forward comment="MARCO PRIO 2 , STREAMING - JUEGOS,VOIP" dst-port=5060-5061 new-connection-mark=\
+    "PRIO 2" protocol=udp
+add action=mark-connection chain=forward dst-port=1863,5190,777 new-connection-mark="PRIO 2" protocol=tcp
+add action=mark-packet chain=forward connection-mark="PRIO 2" new-packet-mark="PRIO 2_up" passthrough=no src-address-list=Clientes
+add action=mark-packet chain=forward connection-mark="PRIO 2" dst-address-list=Clientes new-packet-mark="PRIO 2_down" passthrough=no
+add action=mark-connection chain=forward comment="marco prio 3 navegacion" dst-port=80,443,8000-9000 new-connection-mark="PRIO 3" \
+    protocol=tcp
+add action=mark-connection chain=forward dst-port=80,443,8000-9000 new-connection-mark="PRIO 3" protocol=udp
+add action=mark-packet chain=forward connection-mark="PRIO 3" new-packet-mark="PRIO 3_up" passthrough=no src-address-list=Clientes
+add action=mark-packet chain=forward connection-mark="PRIO 3" dst-address-list=Clientes new-packet-mark="PRIO 3_down" passthrough=no
+add action=mark-connection chain=forward comment="PRIO 4 - PUERTOS LABORALES" dst-port=25,110,143,3389,1723,21-23 \
+    new-connection-mark="PRIO 4" protocol=tcp
+add action=mark-packet chain=forward connection-mark="PRIO 4" new-packet-mark="PRIO 4_up" passthrough=no src-address-list=Clientes
+add action=mark-packet chain=forward connection-mark="PRIO 4" dst-address-list=Clientes new-packet-mark="PRIO 4_down" passthrough=no
+add action=mark-connection chain=forward comment="MARCO PRIO 5" connection-mark=no-mark new-connection-mark="PRIO 5"
+add action=mark-packet chain=forward connection-mark="PRIO 5" new-packet-mark="PRIO 5_up" passthrough=no src-address-list=Clientes
+add action=mark-packet chain=forward connection-mark="PRIO 5" dst-address-list=Clientes new-packet-mark="PRIO 5_down" passthrough=no
+
+/queue tree
+add max-limit=8M name=Download parent=global priority=1
+add name=PRIO1 packet-mark="PRIO 1_down" parent=Download priority=1 queue=BAJADA
+add name=PRIO2 packet-mark="PRIO 2_down" parent=Download priority=2 queue=BAJADA
+add name=PRIO3 packet-mark="PRIO 3_down" parent=Download priority=3 queue=BAJADA
+add name=PRIO4 packet-mark="PRIO 4_down" parent=Download priority=4 queue=BAJADA
+add name=PRIO5 packet-mark="PRIO 5_down" parent=Download priority=5 queue=BAJADA
+add name=PRIO7 packet-mark="PRIO 7_down" parent=Download priority=7 queue=BAJADA
+add name=PRIO8 packet-mark="PRIO 8_down" parent=Download queue=BAJADA
+add max-limit=1M name=Upload parent=global priority=1
+add name=PRIO.1 packet-mark="PRIO 1_up" parent=Upload priority=1 queue=SUBIDA
+add name=PRIO.2 packet-mark="PRIO 2_up" parent=Upload priority=2 queue=SUBIDA
+add name=PRIO.3 packet-mark="PRIO 3_up" parent=Upload priority=3 queue=SUBIDA
+add name=PRIO.4 packet-mark="PRIO 4_up" parent=Upload priority=4 queue=SUBIDA
+add name=PRIO.5 packet-mark="PRIO 5_up" parent=Upload priority=5 queue=SUBIDA
+add name=PRIO.7 packet-mark="PRIO 7_up" parent=Upload priority=7 queue=SUBIDA
+add name=PRIO.8 packet-mark="PRIO 8_up" parent=Upload queue=SUBIDA
