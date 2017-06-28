@@ -1,0 +1,5 @@
+:for e from=3 to=254 do={/queue simple add name="user $e" target="192.168.16.$e" max-limit=124000/1384000 queue=default/default total-queue=default}
+
+:for e from=101 to=130 do={/queue simple add name=("PC".$e-100) target="192.168.16.$e" max-limit=512k/2048k queue=default/default total-queue=default}
+
+:for e from=101 to=130 do={/queue simple add name=("PC".$e-100) target="192.168.16.$e" max-limit=512k/2M queue=default/default total-queue=default}
